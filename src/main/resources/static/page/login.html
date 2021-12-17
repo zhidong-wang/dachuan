@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>登录</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- 引入样式文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.12/lib/index.css"/>
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script src="./js/util.js"></script>
+</head>
+
+<body>
+<div id="app" style="padding:10px">
+    <van-nav-bar
+            title="用户登录"
+    ></van-nav-bar>
+    <van-form @submit="onSubmit">
+        <van-field
+                v-model="username"
+                name="用户名"
+                label="用户名"
+                placeholder="用户名"
+                :rules="[{ required: true, message: '请填写用户名' }]"
+        ></van-field>
+        <van-field
+                v-model="password"
+                type="password"
+                name="密码"
+                label="密码"
+                placeholder="密码"
+                :rules="[{ required: true, message: '请填写密码' }]"
+        ></van-field>
+        <div style="margin: 16px;">
+            <van-button round block type="info" native-type="submit">登录</van-button>
+        </div>
+    </van-form>
+</div>
+<script>
+    // 在 #app 标签下渲染一个按钮组件
+    let vm = new Vue({
+        el: '#app',
+        mixins: [util],
+        data() {
+            return {
+                username: null,
+                password: null
+            };
+        },
+        mounted() {
+        },
+        methods: {
+            onSubmit() {
+                console.log(this.username,this.password);
+                window.location.href = url.orderUrl + '?username=' + this.username + '&password=' + this.password;
+            },
+        }
+    });
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>订单查询</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/datejs/1.0/date.min.js"></script>
+    <!-- 引入样式文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.12/lib/index.css"/>
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script src="./js/util.js"></script>
+</head>
+
+<body>
+<div id="app" style="padding:10px">
+    <van-nav-bar
+            title="订单查询"
+            left-arrow
+            @click-left="onClickLeft"
+            left-text="返回"
+    ></van-nav-bar>
+    <van-nav-bar>
+        <template #left>
+            客户：<van-tag round type="primary">{{username}}</van-tag>
+        </template>
+    </van-nav-bar>
+    <van-search
+            v-model="value"
+            show-action
+            label="加工单位"
+            placeholder="请输入搜索关键词"
+            @search="onSearch"
+    >
+        <template #action>
+            <div @click="onSearch">搜索</div>
+        </template>
+    </van-search>
+    <van-list
+            v-model="loading"
+            :finished="finished"
+            :error.sync="error"
+            error-text="请求失败，点击重新加载"
+            finished-text="没有更多了"
+            @load="onLoad"
+    >
+        <van-cell center v-for="(item,key) in list" :key="key"  value="修改">
+            <template #title>
+                <span class="custom-title">{{item.pubuserdefnvc4}}</span>
+                <van-tag type="primary">{{ item.contractCode }}</van-tag>
+            </template>
+            <template #label>
+            <span class="custom-title">
+                订单日期：{{ item.voucherDate }}
+            </span>
+            </template>
+            <template #default>
+                <van-icon name="passed" @click="goProduct(item)" size="30px" color="#40a9ff"></van-icon>
+            </template>
+        </van-cell>
+    </van-list>
+</div>
+<script>
+    // 在 #app 标签下渲染一个按钮组件
+    let vm = new Vue({
+        el: '#app',
+        mixins: [util],
+        data() {
+            return {
+                value: null,
+                error: false,
+                list: [],
+                loading:false,
+                finished:false,
+                refreshing: false,
+                username: getQueryVariable('username'),
+                contractCode:'C100',
+            };
+        },
+        mounted() {
+            this.queryData(url.queryList,{});
+        },
+
+        methods: {
+            onSearch() {
+                if(this.value){
+                    this.queryData(url.queryList,{keyValue: this.value});
+                }
+            },
+            onClickLeft() {
+                console.log(this.list);
+                window.location.href = url.loginUrl;
+            },
+            onLoad(){
+                setTimeout(() => {
+                    if (this.refreshing) {
+                        this.list = [];
+                        this.refreshing = false;
+                    }
+                    this.onSearch();
+                    if (this.list.length >= 2) {
+                        this.finished = true;
+                    }
+                }, 1000);
+            },
+            goProduct({ pubuserdefnvc4 }){
+                console.log(pubuserdefnvc4);
+                window.location.href = url.productUrl + '?pubuserdefnvc4=' + pubuserdefnvc4;
+            }
+        }
+    });
+
+</script>
+</body>
+
+</html>

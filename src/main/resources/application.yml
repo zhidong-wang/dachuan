@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    username: root
+    password: 111111
+    url: jdbc:mysql://192.168.126.147:3306/boss
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis-plus:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: com.dachuan.entity
+  configuration:
+    # 使用jdbc的getGeneratekeys获取自增主键值
+    use-generated-keys: true
+    map-underscore-to-camel-case: true
+    # 二级缓存是否开启
+    cache-enabled: false
+    # 配置JdbcTypeForNull
+    jdbc-type-for-null: 'null'
+    call-setters-on-nulls: true

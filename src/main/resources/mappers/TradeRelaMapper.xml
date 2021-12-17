@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dachuan.mapper.TradeRelaMapper">
+    <resultMap id="BaseResultMap" type="com.dachuan.entity.TradeRela">
+        <id column="ID" property="id" jdbcType="INTEGER"/>
+        <result column="PT_ID" property="ptId" jdbcType="INTEGER"/>
+        <result column="PT_CODE" property="ptCode" jdbcType="VARCHAR"/>
+        <result column="TRADE_CODE" property="tradeCode" jdbcType="CHAR"/>
+        <result column="STATUS" property="status" jdbcType="CHAR"/>
+        <result column="CRT_TIME" property="crtTime" jdbcType="DATE"/>
+        <result column="UPD_TIME" property="updTime" jdbcType="DATE"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        ID, PT_ID, PT_CODE, TRADE_CODE, STATUS, CRT_TIME, UPD_TIME
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from pt_trade_rela
+        where ID = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="getTradeRelaList" resultMap="BaseResultMap" parameterType="string">
+        select
+        <include refid="Base_Column_List"/>
+        from pt_trade_rela order by id desc limit 3;
+    </select>
+</mapper>

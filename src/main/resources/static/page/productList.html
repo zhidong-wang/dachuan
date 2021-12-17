@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>测试</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- 引入样式文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.12/lib/index.css"/>
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script src="./js/util.js"></script>
+</head>
+
+<body>
+<div id="app" style="padding:10px">
+    <van-nav-bar
+            title="信息查询"
+            left-arrow
+            @click-left="onClickLeft"
+            left-text="返回"
+    ></van-nav-bar>
+    <van-nav-bar>
+        <template #left>
+            客户：<van-tag round type="primary">张三</van-tag>
+        </template>
+        <template #right>
+            合同号：<van-tag round type="primary">C116</van-tag>
+        </template>
+    </van-nav-bar>
+    <van-search
+            v-model="value"
+            show-action
+            label="订单信息"
+            placeholder="请输入搜索关键词"
+            @search="onSearch"
+    >
+        <template #action>
+            <div @click="onSearch">搜索</div>
+        </template>
+    </van-search>
+    <van-pull-refresh v-model="refreshing">
+        <van-list
+                v-model="loading"
+                :finished="finished"
+                :error.sync="error"
+                error-text="请求失败，点击重新加载"
+                finished-text="没有更多了"
+                @load="onLoad"
+        >
+            <van-cell center v-for="(item,key) in list" :key="key" value="修改">
+                <template #title>
+                    <span class="custom-title">{{item.priuserdefnvc1}}</span>
+                    <van-tag type="primary">{{ item.idinventory }}</van-tag>
+                </template>
+                <template #label>
+                <span class="custom-title">
+                    门幅:{{ item.priuserdefnvc2 }}
+                    克重:{{ item.priuserdefnvc3 }}<br/>
+                    计划数:{{ item.quantity }}
+                    建议配缸数:{{ item.pubuserdefdecm1 }}
+                </span>
+                </template>
+                <template #default>
+                    <van-icon name="setting-o" @click="showDialog(item)" size="30px" color="#40a9ff"></van-icon>
+                </template>
+            </van-cell>
+        </van-list>
+    </van-pull-refresh>
+    <van-dialog v-model="dialogShow" title="信息修改" show-cancel-button @confirm="onSubmit">
+        <van-form>
+            <van-field
+                    v-model="ruleForm.factory"
+                    name="factory"
+                    label="加工单位"
+                    placeholder="加工单位"
+                    readonly
+            ></van-field>
+            <van-field name="planNum" label="计划配缸">
+                <template #input>
+                    <van-stepper v-model="ruleForm.planNum" />
+                </template>
+            </van-field>
+            <van-field name="planNum" label="染厂配缸">
+                <template #input>
+                    <van-stepper v-model="ruleForm.factNum" />
+                </template>
+            </van-field>
+            <van-field name="planNum" label="实际出缸">
+                <template #input>
+                    <van-stepper v-model="ruleForm.realNum" />
+                </template>
+            </van-field>
+        </van-form>
+    </van-dialog>
+</div>
+<script>
+    // 在 #app 标签下渲染一个按钮组件
+    let vm = new Vue({
+        el: '#app',
+        mixins: [util],
+        data() {
+            return {
+                value: null,
+                error: false,
+                dialogShow: false,
+                list: [],
+                ruleForm: {},
+                loading:false,
+                finished:false,
+                refreshing: false,
+            };
+        },
+        mounted() {
+            this.queryData(url.queryDetailList,{});
+        },
+        methods: {
+            onSearch() {
+                console.log(this.value);
+                this.queryData(url.queryDetailList,{keyValue: this.value});
+            },
+            onClickLeft() {
+                window.location.href = url.orderUrl;
+            },
+            onSubmit() {
+                this.success('修改成功');
+                this.execAjax("http://www.baidu.com", this.ruleForm);
+                this.dialogShow = false;
+            },
+            showDialog(record) {
+                this.ruleForm = {...record};
+                this.dialogShow = true;
+            },
+            onLoad(){
+                setTimeout(() => {
+                    if (this.refreshing) {
+                        this.list = [];
+                        this.refreshing = false;
+                    }
+                    this.onSearch();
+                    if (this.list.length >= 2) {
+                        this.finished = true;
+                    }
+                }, 1000);
+            },
+        }
+    });
+
+</script>
+</body>
+
+</html>
